@@ -12,6 +12,8 @@ jobs:
     runs-on: windows-latest
     env:
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+      WINDOWS_CERTIFICATE_BASE64: ${{ secrets.WINDOWS_CERTIFICATE_BASE64 }}
+      WINDOWS_CERTIFICATE_PASSWORD: ${{ secrets.WINDOWS_CERTIFICATE_PASSWORD }}
 
     steps:
       - name: Checkout
@@ -40,11 +42,11 @@ jobs:
           copy .env.example dist\.env
 
       - name: Sign SPXBot.exe
-        if: ${{ secrets.WINDOWS_CERTIFICATE_BASE64 != '' && secrets.WINDOWS_CERTIFICATE_PASSWORD != '' }}
+        if: ${{ env.WINDOWS_CERTIFICATE_BASE64 != '' && env.WINDOWS_CERTIFICATE_PASSWORD != '' }}
         shell: pwsh
         run: |
           $certPath = "$env:RUNNER_TEMP\codesign.pfx"
-          [IO.File]::WriteAllBytes($certPath, [Convert]::FromBase64String("${{ secrets.WINDOWS_CERTIFICATE_BASE64 }}"))
+          [IO.File]::WriteAllBytes($certPath, [Convert]::FromBase64String($env:WINDOWS_CERTIFICATE_BASE64))
           $signtool = Get-ChildItem "C:\Program Files (x86)\Windows Kits\10\bin" -Recurse -Filter signtool.exe |
             Where-Object { $_.FullName -like "*\x64\signtool.exe" } |
             Sort-Object FullName -Descending |
@@ -54,7 +56,7 @@ jobs:
           }
           & $signtool.FullName sign `
             /f $certPath `
-            /p "${{ secrets.WINDOWS_CERTIFICATE_PASSWORD }}" `
+            /p "$env:WINDOWS_CERTIFICATE_PASSWORD" `
             /fd SHA256 `
             /tr http://timestamp.digicert.com `
             /td SHA256 `
