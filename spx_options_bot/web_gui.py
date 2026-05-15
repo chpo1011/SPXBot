@@ -565,8 +565,19 @@ class Handler(BaseHTTPRequestHandler):
 
 def main() -> None:
     os.chdir(app_dir())
-    server = ThreadingHTTPServer((HOST, PORT), Handler)
-    url = f"http://{HOST}:{PORT}"
+    server = None
+    port = PORT
+    for candidate in range(PORT, PORT + 20):
+        try:
+            server = ThreadingHTTPServer((HOST, candidate), Handler)
+            port = candidate
+            break
+        except OSError:
+            continue
+    if server is None:
+        raise RuntimeError(f"Could not start local server on ports {PORT}-{PORT + 19}.")
+
+    url = f"http://{HOST}:{port}"
     print(f"Web-GUI laeuft auf {url}")
     threading.Timer(0.5, lambda: webbrowser.open(url)).start()
     server.serve_forever()

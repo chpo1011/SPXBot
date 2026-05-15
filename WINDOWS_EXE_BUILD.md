@@ -38,6 +38,14 @@ README.md
 
 The user does not need Python to run `SPXBot.exe`.
 
+If `SPXBot.exe` does not start, it writes a full traceback next to the executable:
+
+```text
+SPXBot_error.log
+```
+
+Send that file for debugging.
+
 ## Important
 
 Windows `.exe` files must be built on Windows. Building on macOS creates a macOS app, not a Windows executable.
