@@ -71,6 +71,28 @@ Fuer einen richtigen Windows-Installer empfehle ich danach Inno Setup oder NSIS.
 
 und optional eine Desktop-Verknuepfung fuer `SPXBot.exe` anlegen.
 
+## Alternative ohne signiertes EXE
+
+Wenn Windows Smart App Control die unsignierte `SPXBot.exe` blockiert und du kein Code-Signing-Zertifikat hast, nutze die portable Variante:
+
+```text
+build_windows_portable.bat
+```
+
+Das erstellt:
+
+```text
+dist_portable\SPXBot
+```
+
+Der Nutzer startet dann:
+
+```text
+Start SPXBot.bat
+```
+
+Dabei wird keine eigene unsignierte `.exe` gestartet. Stattdessen nutzt die App die offizielle Python-Runtime von python.org im Ordner.
+
 Wenn TWS oder IB Gateway auf demselben Windows-Laptop laeuft:
 
 ```env
